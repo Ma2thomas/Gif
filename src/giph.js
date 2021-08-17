@@ -14,6 +14,7 @@ class Mygiph extends React.Component {
       gif_preview:false,
       gif_fetched_check:false,
       gifsearch:false,
+      submitted:false
     };
     this.handleSubmit = this.handleSubmit.bind(this);
     this.GifFinder = this.GifFinder.bind(this);
@@ -57,6 +58,7 @@ this.setState({gifsearch:false});
 }
 
   myChangeHandler = (event) => {
+    this.setState({submitted:false})
     let nam = event.target.name;
     let val = event.target.value;
     let err = '';
@@ -69,33 +71,13 @@ this.setState({gifsearch:false});
   handleSubmit(e) {
     e.preventDefault();
     console.log("qqqqqqqq")
-    this.setState({ submitted: true });
-
-      axios.post('http://127.0.0.1:8000/post',{ 
-        post_content: this.state.postcontent?this.state.postcontent:null,
-        giph_name: this.state.gif_selection?this.state.gif_selection.target.currentSrc:null,
-    }
-      ).then(res => { // then print response status
-        console.log("Updated data successfully")
-        console.log(res);
-        alert("Successfully Updated")
-        this.setState({
-          postcontent:'', giphname:'',
-        })
-        window.location.reload();
- 
-        
-    }).catch(res => {
-        console.log("Updated data unsuccessfully")
-        console.log(res)
-        alert("Invalid Data Entered")
-    })
-
+    this.setState({ submitted: true, gif_preview:false });
+    
 }
 
 GifFinder = async event => {
   this.state.search=event.target.value;
- 
+ this.setState({submitted:false})
     const results = await axios("https://api.giphy.com/v1/gifs/search", {
       params: {
         api_key: "8XJzFLJyBWxvRSszRvQAkxN5dD78DuYG",
@@ -190,8 +172,21 @@ GifFinder = async event => {
       
       </Box>
       </form>
-      </Box>
+      </Box>           
       </Container>
+      {this.state.submitted &&
+      <Box>
+      <a href="" className="card3 transition">
+      <img src={this.state.gif_selection.target.currentSrc} className="card__image" alt="" />
+      <div className="card__overlay">              
+          <div className="card__header2">
+            <h3 className="card__title">{this.state.postcontent}</h3>            
+            <span className="card__status">1 min ago</span>
+          </div>
+      </div>
+    </a>      
+            </Box>
+  }
       </Box>
     );
   }
